@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  role     Role
+  teacher  Teacher? @relation(fields: [id], references: [userId])
+  student  Student? @relation(fields: [id], references: [userId])
+}
+
+model Teacher {
+  userId  Int    @id
+  classes Class[]
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+model Student {
+  userId     Int      @id
+  classes    Class[]  @relation("StudentClasses", references: [id])
+  grades     Grade[]
+  attendance Attendance[]
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Class {
+  id        Int       @id @default(autoincrement())
+  name      String
+  subject   String
+  teacherId Int
+  teacher   Teacher   @relation(fields: [teacherId], references: [userId])
+  students  Student[] @relation("StudentClasses", references: [userId])
+  grades    Grade[]
+  attendance Attendance[]
+}
+
+model Grade {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  classId   Int
+  bimester  Int
+  value     Float
+
+  student Student @relation(fields: [studentId], references: [userId])
+  class   Class   @relation(fields: [classId], references: [id])
+}
+
+model Attendance {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  classId   Int
+  date      DateTime
+  status    AttendanceStatus
+
+  student Student @relation(fields: [studentId], references: [userId])
+  class   Class   @relation(fields: [classId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}

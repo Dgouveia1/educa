@@ -1,27 +1,35 @@
 "use client"
 
-import { useState } from "react"
-import { LoginForm } from "@/components/login-form"
-import { TeacherDashboard } from "@/components/teacher-dashboard"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [teacherName, setTeacherName] = useState("")
+  const router = useRouter()
 
-  const handleLogin = (cpf: string, password: string) => {
-    // Simular autenticação
-    setTeacherName("Prof. Maria Silva")
-    setIsLoggedIn(true)
-  }
+  useEffect(() => {
+    // Check if user is logged in
+    const user = localStorage.getItem("user")
+    if (!user) {
+      router.push("/login")
+      return
+    }
 
-  const handleLogout = () => {
-    setIsLoggedIn(false)
-    setTeacherName("")
-  }
+    // Redirect based on user role
+    const userData = JSON.parse(user)
+    switch (userData.role) {
+      case "ADMIN":
+        router.push("/admin/dashboard")
+        break
+      case "TEACHER":
+        router.push("/teacher/dashboard")
+        break
+      case "STUDENT":
+        router.push("/student/dashboard")
+        break
+      default:
+        router.push("/login")
+    }
+  }, [router])
 
-  if (!isLoggedIn) {
-    return <LoginForm onLogin={handleLogin} />
-  }
-
-  return <TeacherDashboard teacherName={teacherName} onLogout={handleLogout} />
+  return null // No UI needed as this is just a redirect page
 }
