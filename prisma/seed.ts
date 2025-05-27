@@ -1,5 +1,5 @@
-import { PrismaClient, Role, AttendanceStatus } from "@prisma/client"
-import bcrypt from "bcryptjs"
+import { PrismaClient, UserRole } from "@prisma/client"
+import { hash } from "bcryptjs"
 
 const prisma = new PrismaClient()
 
@@ -7,144 +7,214 @@ async function main() {
   // Clear existing data
   await prisma.attendance.deleteMany()
   await prisma.grade.deleteMany()
-  await prisma.class.deleteMany()
   await prisma.student.deleteMany()
+  await prisma.class.deleteMany()
   await prisma.teacher.deleteMany()
+  await prisma.guardian.deleteMany()
+  await prisma.schoolUser.deleteMany()
+  await prisma.municipalUser.deleteMany()
+  await prisma.school.deleteMany()
+  await prisma.municipality.deleteMany()
   await prisma.user.deleteMany()
 
-  // Create users
-  const adminPassword = await bcrypt.hash("senha123", 10)
-  const teacherPassword = await bcrypt.hash("senha123", 10)
-  const studentPassword = await bcrypt.hash("senha123", 10)
+  const password = await hash("senha123", 10)
 
-  const admin = await prisma.user.create({
+  // Create Super Admin
+  const superAdmin = await prisma.user.create({
     data: {
-      name: "Diretor Admin",
-      email: "diretor@escola.com",
-      password: adminPassword,
-      role: Role.ADMIN,
+      cpf: "12345678900",
+      name: "Super Admin",
+      password,
+      role: UserRole.SUPER_ADMIN,
     },
   })
 
-  const teacher1 = await prisma.user.create({
+  // Create Support Users
+  const supportN1 = await prisma.user.create({
     data: {
-      name: "Maria Silva",
-      email: "maria.silva@escola.com",
-      password: teacherPassword,
-      role: Role.TEACHER,
+      cpf: "12345678901",
+      name: "Suporte N1",
+      password,
+      role: UserRole.SUPPORT_N1,
+      createdBy: superAdmin.id,
     },
   })
 
-  const teacher2 = await prisma.user.create({
+  const supportN2 = await prisma.user.create({
     data: {
-      name: "João Santos",
-      email: "joao.santos@escola.com",
-      password: teacherPassword,
-      role: Role.TEACHER,
+      cpf: "12345678902",
+      name: "Suporte N2",
+      password,
+      role: UserRole.SUPPORT_N2,
+      createdBy: superAdmin.id,
     },
   })
 
-  const student1 = await prisma.user.create({
+  // Create Municipality
+  const municipality = await prisma.municipality.create({
     data: {
-      name: "Ana Aluna",
-      email: "ana.aluna@escola.com",
-      password: studentPassword,
-      role: Role.STUDENT,
+      name: "São Paulo",
+      state: "SP",
     },
   })
 
-  const student2 = await prisma.user.create({
+  // Create Municipal Users
+  const municipalManager = await prisma.user.create({
     data: {
-      name: "Pedro Aluno",
-      email: "pedro.aluno@escola.com",
-      password: studentPassword,
-      role: Role.STUDENT,
+      cpf: "12345678903",
+      name: "Gestor Municipal",
+      password,
+      role: UserRole.MUNICIPAL_MANAGER,
+      createdBy: superAdmin.id,
+      municipalUser: {
+        create: {
+          municipalityId: municipality.id,
+        },
+      },
     },
   })
 
-  // Create teachers
-  await prisma.teacher.create({
+  const municipalOperator = await prisma.user.create({
     data: {
-      userId: teacher1.id,
+      cpf: "12345678904",
+      name: "Operador Municipal",
+      password,
+      role: UserRole.MUNICIPAL_OPERATOR,
+      createdBy: municipalManager.id,
+      municipalUser: {
+        create: {
+          municipalityId: municipality.id,
+        },
+      },
     },
   })
 
-  await prisma.teacher.create({
+  // Create School
+  const school = await prisma.school.create({
     data: {
-      userId: teacher2.id,
+      name: "Escola Municipal João da Silva",
+      municipalityId: municipality.id,
     },
   })
 
-  // Create students
-  await prisma.student.create({
+  // Create School Users
+  const director = await prisma.user.create({
     data: {
-      userId: student1.id,
+      cpf: "12345678905",
+      name: "Diretor Escolar",
+      password,
+      role: UserRole.DIRECTOR,
+      createdBy: municipalManager.id,
+      schoolUser: {
+        create: {
+          schoolId: school.id,
+        },
+      },
     },
   })
 
-  await prisma.student.create({
+  const secretary = await prisma.user.create({
     data: {
-      userId: student2.id,
+      cpf: "12345678906",
+      name: "Secretário Escolar",
+      password,
+      role: UserRole.SECRETARY,
+      createdBy: director.id,
+      schoolUser: {
+        create: {
+          schoolId: school.id,
+        },
+      },
     },
   })
 
-  // Create classes
+  // Create Teacher
+  const teacher = await prisma.user.create({
+    data: {
+      cpf: "12345678907",
+      name: "Professor Silva",
+      password,
+      role: UserRole.TEACHER,
+      createdBy: director.id,
+      teacherProfile: {
+        create: {},
+      },
+      schoolUser: {
+        create: {
+          schoolId: school.id,
+        },
+      },
+    },
+  })
+
+  // Create Guardian
+  const guardian = await prisma.user.create({
+    data: {
+      cpf: "12345678908",
+      name: "Responsável Santos",
+      password,
+      role: UserRole.GUARDIAN,
+      createdBy: secretary.id,
+      guardianProfile: {
+        create: {},
+      },
+    },
+  })
+
+  // Create Student
+  const student = await prisma.student.create({
+    data: {
+      name: "Aluno Santos",
+      guardianId: (await prisma.guardian.findUnique({ where: { userId: guardian.id } }))!.id,
+      dateOfBirth: new Date("2010-01-01"),
+    },
+  })
+
+  // Create Class
   const class1 = await prisma.class.create({
     data: {
-      name: "4º Ano A",
-      subject: "Matemática",
-      teacherId: teacher1.id,
-    },
-  })
-
-  const class2 = await prisma.class.create({
-    data: {
-      name: "5º Ano B",
-      subject: "Português",
-      teacherId: teacher2.id,
-    },
-  })
-
-  // Connect students to classes
-  await prisma.student.update({
-    where: { userId: student1.id },
-    data: {
-      classes: {
-        connect: [{ id: class1.id }, { id: class2.id }],
+      name: "5º Ano A",
+      schoolId: school.id,
+      teacherId: (await prisma.teacher.findUnique({ where: { userId: teacher.id } }))!.id,
+      year: 2024,
+      students: {
+        connect: { id: student.id },
       },
     },
   })
 
-  await prisma.student.update({
-    where: { userId: student2.id },
+  // Create Grades
+  await prisma.grade.create({
     data: {
-      classes: {
-        connect: [{ id: class1.id }],
-      },
+      studentId: student.id,
+      classId: class1.id,
+      value: 8.5,
+      type: "test",
+      period: "1st quarter",
     },
   })
 
-  // Create grades
-  await prisma.grade.createMany({
-    data: [
-      { studentId: student1.id, classId: class1.id, bimester: 1, value: 8.5 },
-      { studentId: student1.id, classId: class1.id, bimester: 2, value: 7.0 },
-      { studentId: student2.id, classId: class1.id, bimester: 1, value: 9.0 },
-      { studentId: student2.id, classId: class1.id, bimester: 2, value: 8.5 },
-    ],
+  // Create Attendance
+  await prisma.attendance.create({
+    data: {
+      studentId: student.id,
+      classId: class1.id,
+      date: new Date(),
+      status: "present",
+    },
   })
 
-  // Create attendance
-  await prisma.attendance.createMany({
-    data: [
-      { studentId: student1.id, classId: class1.id, date: new Date("2023-06-01"), status: AttendanceStatus.PRESENT },
-      { studentId: student1.id, classId: class1.id, date: new Date("2023-06-02"), status: AttendanceStatus.ABSENT },
-      { studentId: student2.id, classId: class1.id, date: new Date("2023-06-01"), status: AttendanceStatus.LATE },
-      { studentId: student2.id, classId: class1.id, date: new Date("2023-06-02"), status: AttendanceStatus.PRESENT },
-    ],
-  })
-
-  console.log("Database seeded successfully.")
+  console.log("Database seeded with test users and data!")
+  console.log("\nTest Users (all passwords are 'senha123'):")
+  console.log("Super Admin CPF: 12345678900")
+  console.log("Suporte N1 CPF: 12345678901")
+  console.log("Suporte N2 CPF: 12345678902")
+  console.log("Gestor Municipal CPF: 12345678903")
+  console.log("Operador Municipal CPF: 12345678904")
+  console.log("Diretor CPF: 12345678905")
+  console.log("Secretário CPF: 12345678906")
+  console.log("Professor CPF: 12345678907")
+  console.log("Responsável CPF: 12345678908")
 }
 
 main()

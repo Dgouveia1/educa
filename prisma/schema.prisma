@@ -7,71 +7,161 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+enum UserRole {
+  SUPER_ADMIN
+  SUPPORT_N1
+  SUPPORT_N2
+  MUNICIPAL_MANAGER
+  MUNICIPAL_OPERATOR
+  DIRECTOR
+  COORDINATOR
+  SECRETARY
+  TEACHER
+  GUARDIAN
+}
+
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  password String
-  role     Role
-  teacher  Teacher? @relation(fields: [id], references: [userId])
-  student  Student? @relation(fields: [id], references: [userId])
+  id        Int      @id @default(autoincrement())
+  cpf       String   @unique
+  name      String
+  password  String
+  role      UserRole
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Role-specific relations
+  municipalUser    MunicipalUser?
+  schoolUser       SchoolUser?
+  teacherProfile   Teacher?
+  guardianProfile  Guardian?
+  createdBy       Int?      // ID of the user who created this user
+  createdByUser   User?     @relation("UserCreation", fields: [createdBy], references: [id])
+  createdUsers    User[]    @relation("UserCreation")
+}
+
+model Municipality {
+  id        Int      @id @default(autoincrement())
+  name      String
+  state     String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schools        School[]
+  municipalUsers MunicipalUser[]
+}
+
+model School {
+  id             Int      @id @default(autoincrement())
+  name           String
+  municipalityId Int
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+  schoolUsers  SchoolUser[]
+  classes     Class[]
+}
+
+model MunicipalUser {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  municipalityId Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id])
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+}
+
+model SchoolUser {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  schoolId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  school School @relation(fields: [schoolId], references: [id])
 }
 
 model Teacher {
-  userId  Int    @id
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
   classes Class[]
-  user    User   @relation(fields: [userId], references: [id])
+}
+
+model Guardian {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id])
+  students Student[]
 }
 
 model Student {
-  userId     Int      @id
-  classes    Class[]  @relation("StudentClasses", references: [id])
+  id          Int      @id @default(autoincrement())
+  name        String
+  guardianId  Int
+  dateOfBirth DateTime
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  guardian   Guardian    @relation(fields: [guardianId], references: [id])
+  classes    Class[]
   grades     Grade[]
   attendance Attendance[]
-  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Class {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  subject   String
+  schoolId  Int
   teacherId Int
-  teacher   Teacher   @relation(fields: [teacherId], references: [userId])
-  students  Student[] @relation("StudentClasses", references: [userId])
-  grades    Grade[]
+  year      Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school     School       @relation(fields: [schoolId], references: [id])
+  teacher    Teacher      @relation(fields: [teacherId], references: [id])
+  students   Student[]
+  grades     Grade[]
   attendance Attendance[]
 }
 
 model Grade {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   studentId Int
   classId   Int
-  bimester  Int
   value     Float
+  type      String   // e.g., "test", "homework", "project"
+  period    String   // e.g., "1st quarter", "2nd quarter"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  student Student @relation(fields: [studentId], references: [userId])
+  student Student @relation(fields: [studentId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
 }
 
 model Attendance {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   studentId Int
   classId   Int
   date      DateTime
-  status    AttendanceStatus
+  status    String   // "present", "absent", "late"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  student Student @relation(fields: [studentId], references: [userId])
+  student Student @relation(fields: [studentId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
-}
-
-enum Role {
-  ADMIN
-  TEACHER
-  STUDENT
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
-  LATE
 }
