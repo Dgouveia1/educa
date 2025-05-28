@@ -191,313 +191,115 @@
     <!-- Tela de Login -->
     <div id="loginScreen" class="login-container">
         <div class="login-card">
-            <div class="text-center mb-4">
-                <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
-                <h2 class="fw-bold text-dark">EducaMais</h2>
-                <p class="text-muted">Acesse sua conta com CPF e senha</p>
-            </div>
-            
+            <h4 class="mb-4">EducaMais</h4>
             <form id="loginForm">
                 <div class="mb-3">
                     <label for="cpf" class="form-label">CPF</label>
-                    <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                    <input type="text" class="form-control" id="cpf" required>
                 </div>
-                
                 <div class="mb-3">
                     <label for="password" class="form-label">Senha</label>
-                    <input type="password" class="form-control" id="password" placeholder="Digite sua senha" required>
+                    <input type="password" class="form-control" id="password" required>
                 </div>
-                
-                <button type="submit" class="btn btn-primary w-100 mb-3">
+                <button type="submit" class="btn btn-primary w-100">
                     <span id="loginText">Entrar</span>
-                    <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 hidden" role="status"></span>
+                    <span id="loginSpinner" class="spinner-border spinner-border-sm hidden" role="status"></span>
                 </button>
-                
-                <div class="text-center">
-                    <a href="#" class="text-decoration-none">Esqueci minha senha</a>
-                </div>
             </form>
         </div>
     </div>
 
     <!-- Dashboard Principal -->
     <div id="dashboardScreen" class="hidden">
-        <!-- Header -->
-        <header class="dashboard-header">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-outline-secondary d-md-none me-3" id="mobileMenuBtn">
-                                <i class="fas fa-bars"></i>
-                            </button>
-                            <h1 class="h4 mb-0 fw-bold">EducaMais</h1>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="d-flex align-items-center">
-                            <span class="text-muted me-3">Olá, <span id="teacherName">Prof. Maria Silva</span></span>
-                            <button class="btn btn-outline-danger btn-sm" id="logoutBtn">
-                                <i class="fas fa-sign-out-alt me-1"></i>
-                                Sair
-                            </button>
-                        </div>
-                    </div>
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">EducaMais</h4>
+                    <button id="logoutBtn" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Sair
+                    </button>
                 </div>
             </div>
-        </header>
+        </div>
 
-        <div class="container-fluid">
-            <!-- Cards de Estatísticas -->
-            <div class="row mb-4">
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center">
-                            <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
-                                <i class="fas fa-chalkboard-teacher"></i>
-                            </div>
-                            <div>
-                                <p class="text-muted mb-0 small">Turmas</p>
-                                <h3 class="fw-bold mb-0">3</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center">
-                            <div class="stat-icon bg-success bg-opacity-10 text-success me-3">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div>
-                                <p class="text-muted mb-0 small">Alunos</p>
-                                <h3 class="fw-bold mb-0">75</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center">
-                            <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div>
-                                <p class="text-muted mb-0 small">Pendências</p>
-                                <h3 class="fw-bold mb-0">12</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center">
-                            <div class="stat-icon bg-info bg-opacity-10 text-info me-3">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div>
-                                <p class="text-muted mb-0 small">Média Geral</p>
-                                <h3 class="fw-bold mb-0">7.8</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navegação por Abas -->
-            <ul class="nav nav-tabs mb-4" id="mainTabs">
-                <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#gradesTab">
-                        <i class="fas fa-clipboard-list me-2"></i>Notas
-                    </a>
+        <div class="container">
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#grades" type="button">
+                        <i class="fas fa-book me-1"></i>
+                        Notas
+                    </button>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#attendanceTab">
-                        <i class="fas fa-calendar-check me-2"></i>Frequência
-                    </a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#attendance" type="button">
+                        <i class="fas fa-calendar-check me-1"></i>
+                        Frequência
+                    </button>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#reportsTab">
-                        <i class="fas fa-chart-bar me-2"></i>Relatórios
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#classesTab">
-                        <i class="fas fa-school me-2"></i>Turmas
-                    </a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#classes" type="button">
+                        <i class="fas fa-chalkboard me-1"></i>
+                        Turmas
+                    </button>
                 </li>
             </ul>
 
-            <!-- Conteúdo das Abas -->
             <div class="tab-content">
-                <!-- Aba de Notas -->
-                <div class="tab-pane fade show active" id="gradesTab">
-                    <div class="grade-table">
-                        <div class="p-3 border-bottom">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h5 class="mb-0">Matemática - 4º Ano A</h5>
-                                    <small class="text-muted">Diário de Classe</small>
+                <!-- Notas -->
+                <div class="tab-pane fade show active" id="grades">
+                    <div class="table-responsive grade-table">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th class="text-center">1º Bim</th>
+                                    <th class="text-center">2º Bim</th>
+                                    <th class="text-center">3º Bim</th>
+                                    <th class="text-center">4º Bim</th>
+                                    <th class="text-center">Média</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Frequência -->
+                <div class="tab-pane fade" id="attendance">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex gap-3 align-items-center">
+                                <div class="flex-grow-1">
+                                    <input type="date" id="attendanceDate" class="form-control">
                                 </div>
-                                <div class="col-auto">
-                                    <button class="btn btn-outline-primary btn-sm me-2">
-                                        <i class="fas fa-upload me-1"></i>Importar
+                                <div>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-chevron-left"></i>
                                     </button>
-                                    <button class="btn btn-outline-success btn-sm me-2">
-                                        <i class="fas fa-download me-1"></i>Exportar
-                                    </button>
-                                    <button class="btn btn-primary btn-sm">
-                                        <i class="fas fa-save me-1"></i>Salvar
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-chevron-right"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="gradesTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Aluno</th>
-                                        <th class="text-center">1º Bim</th>
-                                        <th class="text-center">2º Bim</th>
-                                        <th class="text-center">3º Bim</th>
-                                        <th class="text-center">4º Bim</th>
-                                        <th class="text-center">Média</th>
-                                        <th class="text-center">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="gradesTableBody">
-                                    <!-- Dados serão inseridos via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
-                </div>
-
-                <!-- Aba de Frequência -->
-                <div class="tab-pane fade" id="attendanceTab">
                     <div class="row">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <h5 class="mb-0">Controle de Frequência</h5>
-                                            <small class="text-muted">4º Ano A</small>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-calendar me-2"></i>
-                                                <input type="date" class="form-control form-control-sm" id="attendanceDate">
-                                                <button class="btn btn-primary btn-sm ms-2">
-                                                    <i class="fas fa-save me-1"></i>Salvar
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row mb-3">
-                                        <div class="col-auto">
-                                            <div class="d-flex align-items-center">
-                                                <div class="attendance-btn present me-2">P</div>
-                                                <span class="small">Presente</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="d-flex align-items-center">
-                                                <div class="attendance-btn absent me-2">F</div>
-                                                <span class="small">Falta</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="d-flex align-items-center">
-                                                <div class="attendance-btn late me-2">A</div>
-                                                <span class="small">Atraso</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="attendanceList">
-                                        <!-- Lista de alunos será inserida via JavaScript -->
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <div id="attendanceList"></div>
                         </div>
-                        
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0">Resumo do Dia</h6>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="attendanceChart" width="300" height="300"></canvas>
-                                </div>
+                        <div class="col-md-6">
+                            <div style="height: 300px">
+                                <canvas id="attendanceChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Aba de Relatórios -->
-                <div class="tab-pane fade" id="reportsTab">
-                    <div class="row">
-                        <div class="col-md-6 col-lg-3 mb-3">
-                            <div class="card h-100 text-center">
-                                <div class="card-body d-flex flex-column justify-content-center">
-                                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
-                                    <h6>Boletim Individual</h6>
-                                    <button class="btn btn-outline-primary mt-auto">Gerar</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 col-lg-3 mb-3">
-                            <div class="card h-100 text-center">
-                                <div class="card-body d-flex flex-column justify-content-center">
-                                    <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
-                                    <h6>Relatório de Turma</h6>
-                                    <button class="btn btn-outline-success mt-auto">Gerar</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 col-lg-3 mb-3">
-                            <div class="card h-100 text-center">
-                                <div class="card-body d-flex flex-column justify-content-center">
-                                    <i class="fas fa-calendar-check fa-3x text-warning mb-3"></i>
-                                    <h6>Lista de Frequência</h6>
-                                    <button class="btn btn-outline-warning mt-auto">Gerar</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 col-lg-3 mb-3">
-                            <div class="card h-100 text-center">
-                                <div class="card-body d-flex flex-column justify-content-center">
-                                    <i class="fas fa-book fa-3x text-info mb-3"></i>
-                                    <h6>Diário de Classe</h6>
-                                    <button class="btn btn-outline-info mt-auto">Gerar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aba de Turmas -->
-                <div class="tab-pane fade" id="classesTab">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Minhas Turmas</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row" id="classesList">
-                                <!-- Lista de turmas será inserida via JavaScript -->
-                            </div>
-                        </div>
-                    </div>
+                <!-- Turmas -->
+                <div class="tab-pane fade" id="classes">
+                    <div class="row" id="classesList"></div>
                 </div>
             </div>
         </div>
@@ -523,45 +325,6 @@
             { id: 2, name: "4º Ano B", subject: "Matemática", students: 23 },
             { id: 3, name: "5º Ano A", subject: "Matemática", students: 27 }
         ];
-
-        // Máscara de CPF
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d{1,2})/, '$1-$2');
-                e.target.value = value;
-            }
-        });
-
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const loginText = document.getElementById('loginText');
-            const loginSpinner = document.getElementById('loginSpinner');
-            
-            loginText.textContent = 'Entrando...';
-            loginSpinner.classList.remove('hidden');
-            
-            setTimeout(() => {
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('dashboardScreen').classList.remove('hidden');
-                initializeDashboard();
-            }, 1500);
-        });
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            document.getElementById('dashboardScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            
-            // Reset form
-            document.getElementById('loginForm').reset();
-            document.getElementById('loginText').textContent = 'Entrar';
-            document.getElementById('loginSpinner').classList.add('hidden');
-        });
 
         // Calcular média
         function calculateAverage(grades) {
@@ -749,6 +512,49 @@
 
         // Inicializar quando a página carregar
         document.addEventListener('DOMContentLoaded', function() {
+            // Máscara de CPF
+            const cpfInput = document.getElementById('cpf');
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+                if (value.length > 0) {
+                    value = value.replace(/^(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/^(\d{3}\.)(\d{3})(\d)/, '$1$2.$3');
+                    value = value.replace(/\.(\d{3})(\d)/, '.$1-$2');
+                }
+                e.target.value = value;
+            });
+
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const loginText = document.getElementById('loginText');
+                const loginSpinner = document.getElementById('loginSpinner');
+                
+                loginText.textContent = 'Entrando...';
+                loginSpinner.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('dashboardScreen').classList.remove('hidden');
+                    initializeDashboard();
+                }, 1500);
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                document.getElementById('dashboardScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                
+                // Reset form
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginText').textContent = 'Entrar';
+                document.getElementById('loginSpinner').classList.add('hidden');
+            });
+
             // Configurar tooltips do Bootstrap
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
